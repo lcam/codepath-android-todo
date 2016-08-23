@@ -3,6 +3,8 @@ package com.codepath.simpletodo;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,8 +20,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
-    ListView lvItems;
+    //ArrayAdapter<String> itemsAdapter;
+    ItemsAdapter adapter;
+    //ListView lvItems;
+    RecyclerView rvItems;
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
     //REQUEST_CODE can be any value we like, used to determine the result type later
     private final int REQUEST_CODE = 0;
 
@@ -28,13 +34,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lvItems = (ListView)findViewById(R.id.lvItems);
-//        items = new ArrayList<>();
+        //lvItems = (ListView)findViewById(R.id.lvItems);
+        rvItems = (RecyclerView)findViewById(R.id.rvTasks);
+
+//        items = new ArrayList<>(); // now done in readItems()
         readItems();
-        itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-        lvItems.setAdapter(itemsAdapter);
-//        items.add("First Item");
-//        items.add("Second Item");
+
+        //itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+        // Create adapter passing in the sample user data
+        adapter = new ItemsAdapter(this, items);
+
+        //lvItems.setAdapter(itemsAdapter);
+        // Attach the adapter to the recyclerview to populate items
+        rvItems.setAdapter(adapter);
+
+        // Optionally customize the position you want to default scroll to
+        layoutManager.scrollToPosition(0);
+        // Attach layout manager to the RecyclerView
+        rvItems.setLayoutManager(layoutManager);
+
+        // items.add("First Item"); //no longer hard-coded
+        // items.add("Second Item");
+
         setupListViewListener(); //for removing items
         setupEditListener(); //for editing items
     }
@@ -42,18 +63,37 @@ public class MainActivity extends AppCompatActivity {
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
+        //itemsAdapter.add(itemText);
+        items.add(itemText);
+
+        // Notify the adapter that an item was inserted at position 0
+        adapter.notifyItemInserted(items.size()-1);
+
         etNewItem.setText(""); //reset text field
         writeItems();
     }
 
     private void setupListViewListener() {
-        lvItems.setOnItemLongClickListener(
-                new AdapterView.OnItemLongClickListener() {
+//        lvItems.setOnItemLongClickListener(
+//                new AdapterView.OnItemLongClickListener() {
+//                    @Override
+//                    public boolean onItemLongClick(AdapterView<?> adapter, View item, int pos, long id) {
+//                        items.remove(pos);
+//                        itemsAdapter.notifyDataSetChanged();
+//                        writeItems();
+//                        return true;
+//                    }
+//                }
+//        );
+        ItemClickSupport.addTo(rvItems).setOnItemLongClickListener(
+                new ItemClickSupport.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapter, View item, int pos, long id) {
-                        items.remove(pos);
-                        itemsAdapter.notifyDataSetChanged();
+                    public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                        items.remove(position);
+
+                        // Notify the adapter that an item was removed at position 0
+                        adapter.notifyItemRemoved(position);
+
                         writeItems();
                         return true;
                     }
@@ -62,15 +102,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupEditListener() {
-        lvItems.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
+//        lvItems.setOnItemClickListener(
+//                new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
+//                        //prepare intent: MainActivity -> EditItemActivity
+//                        Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
+//                        //pass data to launched activity
+//                        intent.putExtra("item", items.get(pos));
+//                        intent.putExtra("itemPos", String.valueOf(pos));
+//                        startActivityForResult(intent, REQUEST_CODE); //launch activity
+//                    }
+//                }
+//        );
+        ItemClickSupport.addTo(rvItems).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         //prepare intent: MainActivity -> EditItemActivity
                         Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
                         //pass data to launched activity
-                        intent.putExtra("item", items.get(pos));
-                        intent.putExtra("itemPos", String.valueOf(pos));
+                        intent.putExtra("item", items.get(position));
+                        intent.putExtra("itemPos", String.valueOf(position));
                         startActivityForResult(intent, REQUEST_CODE); //launch activity
                     }
                 }
@@ -91,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
             //notify the adapter such that the to-do list properly reflects the change
             //persist the updated text back to the file
             items.set(namePos, name);
-            itemsAdapter.notifyDataSetChanged();
+            //itemsAdapter.notifyDataSetChanged();
+            adapter.notifyItemChanged(namePos);
             writeItems();
         }
     }
