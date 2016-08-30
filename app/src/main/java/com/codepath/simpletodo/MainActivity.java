@@ -1,15 +1,16 @@
 package com.codepath.simpletodo;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
@@ -18,11 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener{
     ArrayList<String> items;
-    //ArrayAdapter<String> itemsAdapter;
     ItemsAdapter adapter;
-    //ListView lvItems;
     RecyclerView rvItems;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
@@ -34,17 +33,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //lvItems = (ListView)findViewById(R.id.lvItems);
-        rvItems = (RecyclerView)findViewById(R.id.rvTasks);
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("SimpleToDo");
 
-//        items = new ArrayList<>(); // now done in readItems()
+        rvItems = (RecyclerView)findViewById(R.id.rvTasks);
         readItems();
 
-        //itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
         // Create adapter passing in the sample user data
         adapter = new ItemsAdapter(this, items);
 
-        //lvItems.setAdapter(itemsAdapter);
+        // Display dividers for task list
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+        rvItems.addItemDecoration(itemDecoration);
+
         // Attach the adapter to the recyclerview to populate items
         rvItems.setAdapter(adapter);
 
@@ -53,38 +58,60 @@ public class MainActivity extends AppCompatActivity {
         // Attach layout manager to the RecyclerView
         rvItems.setLayoutManager(layoutManager);
 
-        // items.add("First Item"); //no longer hard-coded
-        // items.add("Second Item");
-
         setupListViewListener(); //for removing items
         setupEditListener(); //for editing items
     }
 
-    public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        //itemsAdapter.add(itemText);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    private void showAddDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        // Set dialog title
+        AddItemDialogFragment addItemDiaFrag = AddItemDialogFragment.newInstance("New Task");
+        addItemDiaFrag.show(fm, "fragment_add_item");
+    }
+
+    // 3. This method is invoked in the activity when the listener is triggered
+    // Access the data result passed to the activity here
+    @Override
+    public void onFinishAddDialog(String inputText) {
+        //Toast.makeText(this, inputText, Toast.LENGTH_SHORT).show();
+        onAddItem(inputText);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.miAdd:
+                showAddDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }    }
+
+    public void onAddItem(String itemText) {
+        //EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
+        //String itemText = etNewItem.getText().toString();
+
         items.add(itemText);
 
-        // Notify the adapter that an item was inserted at position 0
+        // Notify the adapter that an item was inserted at end of list
         adapter.notifyItemInserted(items.size()-1);
 
-        etNewItem.setText(""); //reset text field
+        // scroll to the bottom as items are added
+        rvItems.scrollToPosition(adapter.getItemCount()-1);
+
+        //etNewItem.setText(""); //reset text field
         writeItems();
     }
 
     private void setupListViewListener() {
-//        lvItems.setOnItemLongClickListener(
-//                new AdapterView.OnItemLongClickListener() {
-//                    @Override
-//                    public boolean onItemLongClick(AdapterView<?> adapter, View item, int pos, long id) {
-//                        items.remove(pos);
-//                        itemsAdapter.notifyDataSetChanged();
-//                        writeItems();
-//                        return true;
-//                    }
-//                }
-//        );
         ItemClickSupport.addTo(rvItems).setOnItemLongClickListener(
                 new ItemClickSupport.OnItemLongClickListener() {
                     @Override
@@ -102,19 +129,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupEditListener() {
-//        lvItems.setOnItemClickListener(
-//                new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
-//                        //prepare intent: MainActivity -> EditItemActivity
-//                        Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
-//                        //pass data to launched activity
-//                        intent.putExtra("item", items.get(pos));
-//                        intent.putExtra("itemPos", String.valueOf(pos));
-//                        startActivityForResult(intent, REQUEST_CODE); //launch activity
-//                    }
-//                }
-//        );
         ItemClickSupport.addTo(rvItems).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
@@ -144,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
             //notify the adapter such that the to-do list properly reflects the change
             //persist the updated text back to the file
             items.set(namePos, name);
-            //itemsAdapter.notifyDataSetChanged();
             adapter.notifyItemChanged(namePos);
             writeItems();
         }
@@ -169,6 +182,5 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
 }

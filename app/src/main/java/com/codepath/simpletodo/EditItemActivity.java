@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 public class EditItemActivity extends AppCompatActivity {
@@ -21,6 +22,8 @@ public class EditItemActivity extends AppCompatActivity {
         etEditItem.setText(item); //set old task to text field
         etEditItem.setSelection(etEditItem.length()); //set cursor to end of task
         itemPos = getIntent().getStringExtra("itemPos"); //get pos of old task
+        //Make keyboard show up when screen is brought up
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     //launched for a result

@@ -16,13 +16,20 @@ The following **required** functionality is completed:
 
 ## Changelog
 
+ver 1.5
 * [x] Replaced Listview with RecylerView
+
+ver 2.0
+* [x] Replaced Actionbar with Toolbar.  Toolbar reacts to scrolling.
+* [x] For adding items, moved text field and button to a dialog fragment, which can be invoked via toolbar button
+* [x] Updated color scheme, increased font size of task list
+* [x] Keyboard automatically appears to add or edit tasks
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/v0aPFab.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/Fs0zlX6.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
