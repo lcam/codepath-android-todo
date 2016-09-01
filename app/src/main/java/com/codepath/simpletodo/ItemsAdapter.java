@@ -14,7 +14,7 @@ import java.util.List;
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
 
     // Store a member variable for the tasks
-    private List<String> mItems;
+    private List<Tasks> mItems;
     // Store the context for easy access
     private Context mContext;
 
@@ -37,7 +37,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     }
 
     // Pass in the contact array into the constructor
-    public ItemsAdapter(Context context, List<String> items) {
+    public ItemsAdapter(Context context, List<Tasks> items) {
         mItems = items;
         mContext = context;
     }
@@ -65,11 +65,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ItemsAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
-        String task = mItems.get(position);
+        Tasks task = mItems.get(position);
 
         // Set item views based on your views and data model
         TextView textView = viewHolder.nameTextView;
-        textView.setText(task);
+        textView.setText(task.getName());
     }
 
     @Override

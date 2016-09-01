@@ -1,6 +1,5 @@
 package com.codepath.simpletodo;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,23 +9,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener{
-    ArrayList<String> items;
+public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener,
+        EditItemDialogFragment.EditItemDialogListener{
+
+    ArrayList<Tasks> items;
     ItemsAdapter adapter;
+
     RecyclerView rvItems;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-    //REQUEST_CODE can be any value we like, used to determine the result type later
-    private final int REQUEST_CODE = 0;
+    Tasks taskSelect;
+    int taskSelectPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +41,15 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         getSupportActionBar().setTitle("SimpleToDo");
 
         rvItems = (RecyclerView)findViewById(R.id.rvTasks);
-        readItems();
+        //readItems();
 
-        // Create adapter passing in the sample user data
+        // Query ActiveAndroid for list of data
+        List<Tasks> queryResults = new Select().from(Tasks.class).execute();
+
+        // Construct ArrayList for model type
+        items = new ArrayList<Tasks>(queryResults);
+
+        // Construct adapter plugging in the array source
         adapter = new ItemsAdapter(this, items);
 
         // Display dividers for task list
@@ -76,12 +83,23 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         addItemDiaFrag.show(fm, "fragment_add_item");
     }
 
+    private void showEditDialog(String oldTaskName) {
+        FragmentManager fm = getSupportFragmentManager();
+        EditItemDialogFragment editItemDialogFragment = EditItemDialogFragment.newInstance("Edit Item Below", oldTaskName);
+        editItemDialogFragment.show(fm, "fragment_edit_item");
+    }
+
+
     // 3. This method is invoked in the activity when the listener is triggered
     // Access the data result passed to the activity here
     @Override
     public void onFinishAddDialog(String inputText) {
-        //Toast.makeText(this, inputText, Toast.LENGTH_SHORT).show();
         onAddItem(inputText);
+    }
+
+    @Override
+    public void onFinishEditDialog(String inputText) {
+        onEditItem(inputText);
     }
 
     @Override
@@ -96,10 +114,13 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         }    }
 
     public void onAddItem(String itemText) {
-        //EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        //String itemText = etNewItem.getText().toString();
+        // Create a new task
+        Tasks task = new Tasks(items.size()-1, itemText);
+        task.save();
 
-        items.add(itemText);
+        //items.add(itemText);
+        //List<Tasks> queryResults = new Select().from(Tasks.class).where("Name = ?", itemText).execute();
+        items.add(task);
 
         // Notify the adapter that an item was inserted at end of list
         adapter.notifyItemInserted(items.size()-1);
@@ -107,8 +128,21 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // scroll to the bottom as items are added
         rvItems.scrollToPosition(adapter.getItemCount()-1);
 
-        //etNewItem.setText(""); //reset text field
-        writeItems();
+        Toast.makeText(this, "Task added", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onEditItem(String itemText) {
+        //update selected task
+        taskSelect.setName(itemText);
+        taskSelect.save();
+
+        //inserting the updated task at the correct position in the array
+        items.set(taskSelectPos, taskSelect);
+
+        //notify the adapter such that the to-do list properly reflects the change
+        adapter.notifyItemChanged(taskSelectPos);
+
+        Toast.makeText(this, "Task edited", Toast.LENGTH_SHORT).show();
     }
 
     private void setupListViewListener() {
@@ -118,10 +152,15 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
                     public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
                         items.remove(position);
 
-                        // Notify the adapter that an item was removed at position 0
+                        // Notify the adapter that an item was removed at position
                         adapter.notifyItemRemoved(position);
 
-                        writeItems();
+                        // Deleting items
+                        //QUESTION: Why doesn't this work???
+                        //Tasks task = Tasks.load(Tasks.class, position);
+                        //task.delete();
+                        new Delete().from(Tasks.class).where("remote_id = ?", position).execute();
+
                         return true;
                     }
                 }
@@ -133,54 +172,13 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        //prepare intent: MainActivity -> EditItemActivity
-                        Intent intent = new Intent(MainActivity.this, EditItemActivity.class);
-                        //pass data to launched activity
-                        intent.putExtra("item", items.get(position));
-                        intent.putExtra("itemPos", String.valueOf(position));
-                        startActivityForResult(intent, REQUEST_CODE); //launch activity
+                        taskSelect = items.get(position);
+                        String taskSelectName = taskSelect.getName();
+                        taskSelectPos = position;
+                        showEditDialog(taskSelectName);
                     }
                 }
         );
-    }
-
-    //MainActivity, time to handle the result of the sub-activity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if(resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            // Extract name value from result extras
-            String name = intent.getExtras().getString("item");
-            int namePos = Integer.parseInt(intent.getExtras().getString("itemPos"));
-
-            Toast.makeText(this, "task edited", Toast.LENGTH_SHORT).show();
-
-            //inserting the updated task at the correct position in the array
-            //notify the adapter such that the to-do list properly reflects the change
-            //persist the updated text back to the file
-            items.set(namePos, name);
-            adapter.notifyItemChanged(namePos);
-            writeItems();
-        }
-    }
-
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            items = new ArrayList<String>();
-        }
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
