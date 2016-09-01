@@ -40,7 +40,7 @@ ver 2.0
 
 ver 3.0
 * [x] Persist data with SQLite
-* [x] For adding items, moved standalone edit activity to a dialog fragment
+* [x] For editing items, moved standalone edit activity to a dialog fragment
 
 ## Video Walkthrough 
 
