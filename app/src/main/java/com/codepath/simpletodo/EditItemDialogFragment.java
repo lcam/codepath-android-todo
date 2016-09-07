@@ -89,6 +89,7 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
         //window.setLayout((int) (size.x * 1), WindowManager.LayoutParams.WRAP_CONTENT);
         window.setLayout(size.x, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
+
         // Call super onResume after sizing
         super.onResume();
     }

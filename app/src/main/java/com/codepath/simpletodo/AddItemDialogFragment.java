@@ -86,6 +86,7 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
         //window.setLayout((int) (size.x * 1), WindowManager.LayoutParams.WRAP_CONTENT);
         window.setLayout(size.x, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
+
         // Call super onResume after sizing
         super.onResume();
     }

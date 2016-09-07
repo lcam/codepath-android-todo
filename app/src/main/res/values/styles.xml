@@ -7,7 +7,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:dialogTheme">@style/CustomDialog</item>
+        <!--Can set dialog style programmatically in java file-->
+        <!--item name="android:dialogTheme">@style/CustomDialog</item-->
     </style>
 
 
@@ -17,8 +18,18 @@
 
 
     <!--For some reason, Dialog has no title by default after API 23 -->
-    <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
+    <style name="AppDialogTheme" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">false</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+    </style>
+
+    <style name="DialogWindowTitle" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@style/DialogWindowTitleText</item>
+    </style>
+
+    <style name="DialogWindowTitleText" parent="@android:style/TextAppearance.DialogWindowTitle">
+        <item name="android:textSize">24sp</item>
     </style>
 
 </resources>

@@ -1,5 +1,7 @@
 package com.codepath.simpletodo;
 
+import android.app.DatePickerDialog;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,17 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.DatePicker;
+import java.util.Calendar;  // do not import java.icu.utils.Calendar
 import android.widget.Toast;
-
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener,
-        EditItemDialogFragment.EditItemDialogListener{
+        EditItemDialogFragment.EditItemDialogListener, DatePickerDialog.OnDateSetListener{
 
     ArrayList<Tasks> items;
     ItemsAdapter adapter;
@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         //readItems();
 
         // Query ActiveAndroid for list of data
-        List<Tasks> queryResults = new Select().from(Tasks.class).execute();
+        List<Tasks> queryResults = Tasks.findWithQuery(Tasks.class, "Select * from Task");
+        //List<Tasks> queryResults = new Select().from(Tasks.class).execute();
 
         // Construct ArrayList for model type
         items = new ArrayList<Tasks>(queryResults);
@@ -64,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         layoutManager.scrollToPosition(0);
         // Attach layout manager to the RecyclerView
         rvItems.setLayoutManager(layoutManager);
-
-        setupListViewListener(); //for removing items
-        setupEditListener(); //for editing items
     }
 
     @Override
@@ -74,32 +72,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
-
-    private void showAddDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        // Set dialog title
-        AddItemDialogFragment addItemDiaFrag = AddItemDialogFragment.newInstance("New Task");
-        addItemDiaFrag.show(fm, "fragment_add_item");
-    }
-
-    private void showEditDialog(String oldTaskName) {
-        FragmentManager fm = getSupportFragmentManager();
-        EditItemDialogFragment editItemDialogFragment = EditItemDialogFragment.newInstance("Edit Item Below", oldTaskName);
-        editItemDialogFragment.show(fm, "fragment_edit_item");
-    }
-
-
-    // 3. This method is invoked in the activity when the listener is triggered
-    // Access the data result passed to the activity here
-    @Override
-    public void onFinishAddDialog(String inputText) {
-        onAddItem(inputText);
-    }
-
-    @Override
-    public void onFinishEditDialog(String inputText) {
-        onEditItem(inputText);
     }
 
     @Override
@@ -111,19 +83,80 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }    }
+        }
+    }
 
-    public void onAddItem(String itemText) {
+
+
+    public void setupEditListener(int position) {
+        taskSelect = items.get(position);
+        String taskSelectName = taskSelect.name;
+        taskSelectPos = position;
+        showEditDialog(taskSelectName);
+    }
+
+    public void setupDeleteListener(int position) {
+        // Deleting items
+        //This removes the Author with ID = 23 from the database.
+        //A common gotcha here is when there is no such Author with this ID,
+        //so a null pointer check here is often advisable.
+        //Tasks task = Tasks.findById(Tasks.class, (long)position); //NOT VALID BECAUSE task doesn't have ID field!!!!!!
+        Tasks task = items.get(position);
+        task.delete();
+
+        items.remove(position);
+
+        // Notify the adapter that an item was removed at position
+        adapter.notifyItemRemoved(position);
+    }
+
+
+
+    private void showAddDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        // Set dialog title
+        AddItemDialogFragment addItemDiaFrag = AddItemDialogFragment.newInstance("New Task");
+        // Set dialog style
+        addItemDiaFrag.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
+        addItemDiaFrag.show(fm, "fragment_add_item");
+    }
+
+    private void showEditDialog(String oldTaskName) {
+        FragmentManager fm = getSupportFragmentManager();
+        // Set dialog title and pass old Task Name along
+        EditItemDialogFragment editItemDialogFragment = EditItemDialogFragment.newInstance("Edit Item Below", oldTaskName);
+        // Set dialog style
+        editItemDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppDialogTheme);
+        editItemDialogFragment.show(fm, "fragment_edit_item");
+    }
+
+    public void showDatePickerDialog(int position) {
+        taskSelect = items.get(position);
+        taskSelectPos = position;
+
+        Bundle args = new Bundle();
+        args.putLong("due", taskSelect.due);
+
+        DatePickerFragment calendarFragment = new DatePickerFragment();
+        calendarFragment.setArguments(args);
+        calendarFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+
+
+    // 3. This method is invoked in the activity when the listener is triggered
+    // Access the data result passed to the activity here
+    @Override
+    public void onFinishAddDialog(String inputText) {
         // Create a new task
-        Tasks task = new Tasks(items.size()-1, itemText);
+        Tasks task = new Tasks(inputText);
         task.save();
 
         //items.add(itemText);
-        //List<Tasks> queryResults = new Select().from(Tasks.class).where("Name = ?", itemText).execute();
         items.add(task);
 
         // Notify the adapter that an item was inserted at end of list
-        adapter.notifyItemInserted(items.size()-1);
+        adapter.notifyItemInserted(items.size()); //QUESTION: Why not items.size()-1
 
         // scroll to the bottom as items are added
         rvItems.scrollToPosition(adapter.getItemCount()-1);
@@ -131,9 +164,10 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         Toast.makeText(this, "Task added", Toast.LENGTH_SHORT).show();
     }
 
-    public void onEditItem(String itemText) {
+    @Override
+    public void onFinishEditDialog(String inputText) {
         //update selected task
-        taskSelect.setName(itemText);
+        taskSelect.name = inputText;
         taskSelect.save();
 
         //inserting the updated task at the correct position in the array
@@ -145,40 +179,24 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         Toast.makeText(this, "Task edited", Toast.LENGTH_SHORT).show();
     }
 
-    private void setupListViewListener() {
-        ItemClickSupport.addTo(rvItems).setOnItemLongClickListener(
-                new ItemClickSupport.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                        items.remove(position);
+    @Override // handle the date selected
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        // store the values selected into a Calendar instance
+        final Calendar c = Calendar.getInstance();
 
-                        // Notify the adapter that an item was removed at position
-                        adapter.notifyItemRemoved(position);
+//        c.set(Calendar.YEAR, year);
+//        c.set(Calendar.MONTH, monthOfYear);
+//        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        c.set(year, monthOfYear, dayOfMonth, 0, 0);
 
-                        // Deleting items
-                        //QUESTION: Why doesn't this work???
-                        //Tasks task = Tasks.load(Tasks.class, position);
-                        //task.delete();
-                        new Delete().from(Tasks.class).where("remote_id = ?", position).execute();
+        //update due date for selected task
+        taskSelect.due = c.getTimeInMillis();
+        taskSelect.save();
 
-                        return true;
-                    }
-                }
-        );
-    }
+        //notify the adapter such that the to-do list properly reflects the change
+        adapter.notifyItemChanged(taskSelectPos);
 
-    private void setupEditListener() {
-        ItemClickSupport.addTo(rvItems).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        taskSelect = items.get(position);
-                        String taskSelectName = taskSelect.getName();
-                        taskSelectPos = position;
-                        showEditDialog(taskSelectName);
-                    }
-                }
-        );
+        Toast.makeText(this, "Due date saved", Toast.LENGTH_SHORT).show();
     }
 
 }

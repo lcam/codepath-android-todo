@@ -1,10 +1,10 @@
-# Pre-work - Simple ToDo ver 3.0
+# Pre-work - Simple ToDo ver 4.0
 
 SimpleToDo is an android app that allows building a todo list and basic todo items management functionality including adding new items, editing and deleting an existing item.
 
 Submitted by: Leon Cam
 
-Time spent: 16 hours spent in total
+Time spent: 32 hours spent in total
 
 ## User Stories
 
@@ -16,9 +16,9 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-* [x] Persist the todo items [into SQLite](http://guides.codepath.com/android/Persisting-Data-to-the-Device#sqlite) with ActiveAndroid instead of a text file
+* [x] Persist the todo items [into SQLite](http://guides.codepath.com/android/Persisting-Data-to-the-Device#sqlite) with SugarORM instead of a text file
 * [x] Improve style of the todo items in the list [using a custom adapter](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView)
-* [ ] Add support for completion due dates for todo items (and display within listview item)
+* [x] Add support for completion due dates for todo items (and display within listview item)
 * [x] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
 * [ ] Add support for selecting the priority of each todo item (and display in listview item)
 * [x] Tweak the style improving the UI / UX, play with colors, images or backgrounds
@@ -39,8 +39,12 @@ ver 2.0
 * [x] Keyboard automatically appears to add or edit tasks
 
 ver 3.0
-* [x] Persist data with SQLite
+* [x] Persist data with SQLite using ActiveAndroid
 * [x] For editing items, moved standalone edit activity to a dialog fragment
+
+ver 4.0
+* [x] ActiveAndroid no longer actively support, persist data with SQLite using SugarORM instead
+* [x] Implemented completion due dates for each task
 
 ## Video Walkthrough 
 
