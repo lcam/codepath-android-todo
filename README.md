@@ -43,7 +43,7 @@ ver 3.0
 * [x] For editing items, moved standalone edit activity to a dialog fragment
 
 ver 4.0
-* [x] ActiveAndroid no longer actively support, persist data with SQLite using SugarORM instead
+* [x] ActiveAndroid no longer maintained by developer, so SugarORM is used instead
 * [x] Implemented completion due dates for each task
 
 ## Video Walkthrough 
