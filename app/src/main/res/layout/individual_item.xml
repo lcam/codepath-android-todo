@@ -11,6 +11,19 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:textSize="20sp"
+        android:layout_toLeftOf="@+id/priority_icon"
+        android:layout_toStartOf="@+id/priority_icon" />
+
+    <ImageView
+        android:id="@+id/priority_icon"
+        android:layout_width="48dp"
+        android:maxWidth="48dp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_centerInParent="true"
+        android:tint="@color/colorPrimary"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/calendar_icon"
         android:layout_toStartOf="@+id/calendar_icon" />
 
@@ -25,7 +38,6 @@
         android:tint="@color/colorPrimary"
         android:visibility="visible"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="showDatePickerDialog"/>
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

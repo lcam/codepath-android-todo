@@ -106,9 +106,4 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
         }
         return false;
     }
-
-//    // QUESTION: Why can't this work...
-//    public void onSubmitAdd(View v) {
-//        mEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
-//    }
 }

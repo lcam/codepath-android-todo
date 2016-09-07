@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
 import java.util.Calendar;  // do not import java.icu.utils.Calendar
+
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
     Tasks taskSelect;
     int taskSelectPos;
+    int taskP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,8 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         rvItems = (RecyclerView)findViewById(R.id.rvTasks);
         //readItems();
 
-        // Query ActiveAndroid for list of data
+        // Query SugarORM for list of data
         List<Tasks> queryResults = Tasks.findWithQuery(Tasks.class, "Select * from Task");
-        //List<Tasks> queryResults = new Select().from(Tasks.class).execute();
 
         // Construct ArrayList for model type
         items = new ArrayList<Tasks>(queryResults);
@@ -101,13 +102,36 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         //A common gotcha here is when there is no such Author with this ID,
         //so a null pointer check here is often advisable.
         //Tasks task = Tasks.findById(Tasks.class, (long)position); //NOT VALID BECAUSE task doesn't have ID field!!!!!!
-        Tasks task = items.get(position);
-        task.delete();
+        taskSelect = items.get(position);
+        taskSelect.delete();
 
         items.remove(position);
 
         // Notify the adapter that an item was removed at position
         adapter.notifyItemRemoved(position);
+
+        Toast.makeText(this, "Task removed", Toast.LENGTH_SHORT).show();
+    }
+
+    public void setupPriorityListener(int position) {
+        //final ImageView priorityIcon = (ImageView) findViewById(R.id.priority_icon);
+        taskSelect = items.get(position);
+
+        if (taskSelect.priority == 0) {
+            //priorityIcon.setImageResource(R.drawable.ic_alert_circle_black_24dp);
+            taskSelect.priority = 1;
+        } else {
+            //priorityIcon.setImageResource(R.drawable.ic_alert_circle_outline_black_24dp);
+            taskSelect.priority = 0;
+        }
+
+        //update priority for selected task
+        taskSelect.save();
+
+        //notify the adapter such that the to-do list properly reflects the change
+        adapter.notifyItemChanged(position);
+
+        //Toast.makeText(this, "Priority updated", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -184,9 +208,10 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // store the values selected into a Calendar instance
         final Calendar c = Calendar.getInstance();
 
-//        c.set(Calendar.YEAR, year);
-//        c.set(Calendar.MONTH, monthOfYear);
-//        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        //Just another way of setting time
+        //c.set(Calendar.YEAR, year);
+        //c.set(Calendar.MONTH, monthOfYear);
+        //c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         c.set(year, monthOfYear, dayOfMonth, 0, 0);
 
         //update due date for selected task

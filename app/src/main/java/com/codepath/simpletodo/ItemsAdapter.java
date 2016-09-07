@@ -1,6 +1,7 @@
 package com.codepath.simpletodo;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         // for any view that will be set as you render a row
         public TextView nameTextView;
         public ImageView calendarIcon;
+        public ImageView priorityIcon;
         public IMyViewHolderClicks mListener;
         //public int position;
 
@@ -39,16 +41,26 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             //mListener = listener; //NOTICE: ASSIGN mListener in onCreateViewHolder, NOT HERE
             nameTextView = (TextView) itemView.findViewById(R.id.task_name);
             calendarIcon = (ImageView) itemView.findViewById(R.id.calendar_icon);
+            priorityIcon = (ImageView) itemView.findViewById(R.id.priority_icon);
 
             calendarIcon.setOnClickListener(this); //calendar icon
-            itemView.setOnClickListener(this); //edit task
-            itemView.setOnLongClickListener(this); //delete task
+            priorityIcon.setOnClickListener(this); //priority icon
+            nameTextView.setOnClickListener(this); //edit task
+            nameTextView.setOnLongClickListener(this); //delete task
+            //ver 5.0: use nameTextView instead of itemView to limit clickable surface
         }
 
         @Override
         public void onClick(View view) {
             if (view instanceof ImageView){
-                mListener.onCalendarIcon((ImageView)view);
+                switch (view.getId()) {
+                    case R.id.calendar_icon:
+                        mListener.onCalendarIcon((ImageView)view);
+                        break;
+                    case R.id.priority_icon:
+                        mListener.onPriorityIcon((ImageView)view);
+                        break;
+                }
             } else {
                 mListener.onTaskNameClick(view);
             }
@@ -64,6 +76,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             public void onTaskNameClick(View caller);
             public void onTaskNameLongClick(View caller);
             public void onCalendarIcon(ImageView callerImage);
+            public void onPriorityIcon(ImageView callerImage);
         }
     }
 
@@ -117,6 +130,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                     activity.showDatePickerDialog(position);
                 }
             }
+
+            @Override
+            public void onPriorityIcon(ImageView callerImage) {
+                final int position = viewHolder.getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    MainActivity activity = (MainActivity) context;
+                    activity.setupPriorityListener(position);
+                }
+            }
         };
         return viewHolder;
     }
@@ -126,12 +148,19 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     public void onBindViewHolder(ItemsAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
         Tasks task = mItems.get(position);
+        int taskP = task.priority;
 
         // Set item views based on your views and data model
         TextView textView = viewHolder.nameTextView;
         textView.setText(task.name);
 
-        //viewHolder.position = position;
+        ImageView imageView = viewHolder.priorityIcon;
+        if(taskP == 0) {
+            imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_alert_circle_outline_black_24dp));
+        }
+        else {
+            imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_alert_circle_black_24dp));
+        }
     }
 
     @Override

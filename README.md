@@ -1,10 +1,10 @@
-# Pre-work - Simple ToDo ver 4.0
+# Pre-work - Simple ToDo ver 5.0
 
 SimpleToDo is an android app that allows building a todo list and basic todo items management functionality including adding new items, editing and deleting an existing item.
 
 Submitted by: Leon Cam
 
-Time spent: 32 hours spent in total
+Time spent: 36 hours spent in total
 
 ## User Stories
 
@@ -20,7 +20,7 @@ The following **optional** features are implemented:
 * [x] Improve style of the todo items in the list [using a custom adapter](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView)
 * [x] Add support for completion due dates for todo items (and display within listview item)
 * [x] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
-* [ ] Add support for selecting the priority of each todo item (and display in listview item)
+* [x] Add support for selecting the priority of each todo item (and display in listview item)
 * [x] Tweak the style improving the UI / UX, play with colors, images or backgrounds
 
 The following **additional** features are implemented:
@@ -29,7 +29,7 @@ The following **additional** features are implemented:
 
 ## Changelog
 
-ver 1.5
+ver 1.1
 * [x] Replaced Listview with RecylerView
 
 ver 2.0
@@ -46,11 +46,15 @@ ver 4.0
 * [x] ActiveAndroid no longer maintained by developer, so SugarORM is used instead
 * [x] Implemented completion due dates for each task
 
+ver 5.0
+* [x] Tasks can now be set as either low or high priority
+* [x] Clicking around calendar and priority icons area no longer triggers edit task dialog
+
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/pdx4Jhy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/m3Es138.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
