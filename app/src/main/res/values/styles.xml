@@ -19,7 +19,7 @@
 
     <!--For some reason, Dialog has no title by default after API 23 -->
     <style name="AppDialogTheme" parent="@style/Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">false</item>
+        <item name="windowNoTitle">false</item>
         <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
     </style>
 

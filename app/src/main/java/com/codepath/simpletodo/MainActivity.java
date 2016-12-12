@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
     Tasks taskSelect;
     int taskSelectPos;
-    int taskP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +37,9 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
         // Find the toolbar view inside the activity layout
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("SimpleToDo");
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("SimpleToDo");
 
         rvItems = (RecyclerView)findViewById(R.id.rvTasks);
         //readItems();
@@ -98,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
     public void setupDeleteListener(int position) {
         // Deleting items
-        //This removes the Author with ID = 23 from the database.
         //A common gotcha here is when there is no such Author with this ID,
         //so a null pointer check here is often advisable.
         //Tasks task = Tasks.findById(Tasks.class, (long)position); //NOT VALID BECAUSE task doesn't have ID field!!!!!!
@@ -118,10 +116,8 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         taskSelect = items.get(position);
 
         if (taskSelect.priority == 0) {
-            //priorityIcon.setImageResource(R.drawable.ic_alert_circle_black_24dp);
             taskSelect.priority = 1;
         } else {
-            //priorityIcon.setImageResource(R.drawable.ic_alert_circle_outline_black_24dp);
             taskSelect.priority = 0;
         }
 
@@ -158,12 +154,14 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         taskSelect = items.get(position);
         taskSelectPos = position;
 
+        //pass current due date to dialog
         Bundle args = new Bundle();
         args.putLong("due", taskSelect.due);
 
+        FragmentManager fm = getSupportFragmentManager();
         DatePickerFragment calendarFragment = new DatePickerFragment();
         calendarFragment.setArguments(args);
-        calendarFragment.show(getSupportFragmentManager(), "datePicker");
+        calendarFragment.show(fm, "datePicker");
     }
 
 
@@ -172,15 +170,15 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     // Access the data result passed to the activity here
     @Override
     public void onFinishAddDialog(String inputText) {
-        // Create a new task
+        // Create a new task into SQL database
         Tasks task = new Tasks(inputText);
         task.save();
 
-        //items.add(itemText);
+        //add task object to ArrayList
         items.add(task);
 
         // Notify the adapter that an item was inserted at end of list
-        adapter.notifyItemInserted(items.size()); //QUESTION: Why not items.size()-1
+        adapter.notifyItemInserted(items.size());
 
         // scroll to the bottom as items are added
         rvItems.scrollToPosition(adapter.getItemCount()-1);
@@ -190,11 +188,11 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
     @Override
     public void onFinishEditDialog(String inputText) {
-        //update selected task
+        //update selected task in SQL database
         taskSelect.name = inputText;
         taskSelect.save();
 
-        //inserting the updated task at the correct position in the array
+        //inserting the updated task at the correct position in ArrayList
         items.set(taskSelectPos, taskSelect);
 
         //notify the adapter such that the to-do list properly reflects the change

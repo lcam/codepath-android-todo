@@ -57,7 +57,6 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
         mEditText.setText(itemName);
 
         // Show soft keyboard automatically and request focus to field
-        // QUESTION: why doesn't SOFT_INPUT_STATE_VISIBLE work???
         mEditText.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -96,7 +95,6 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
 
     // Fires whenever the textfield has an action performed
     // In this case, when the "Done" button is pressed
-    // REQUIRES a 'soft keyboard' (virtual keyboard)
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (EditorInfo.IME_ACTION_DONE == actionId) {

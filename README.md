@@ -49,6 +49,7 @@ ver 4.0
 ver 5.0
 * [x] Tasks can now be set as either low or high priority
 * [x] Clicking around calendar and priority icons area no longer triggers edit task dialog
+* [x] Updated launcher icon
 
 ## Video Walkthrough 
 

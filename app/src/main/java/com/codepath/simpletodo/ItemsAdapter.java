@@ -29,7 +29,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         public ImageView calendarIcon;
         public ImageView priorityIcon;
         public IMyViewHolderClicks mListener;
-        //public int position;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
