@@ -51,6 +51,10 @@ ver 5.0
 * [x] Clicking around calendar and priority icons area no longer triggers edit task dialog
 * [x] Updated launcher icon
 
+ver 6.0
+* [x] Delete tasks by swiping instead of long clicking
+* [x] Reorder tasks by dragging them up or down
+
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:

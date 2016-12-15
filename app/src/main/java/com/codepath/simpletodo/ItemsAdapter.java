@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.simpletodo.itemTouchHelper.ItemTouchHelperAdapter;
+
+import java.util.Collections;
 import java.util.List;
 
 // Create the basic adapter extending from RecyclerView.Adapter
 // Note that we specify the custom ViewHolder which gives us access to our views
-public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
+public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implements ItemTouchHelperAdapter{
 
     // Store a member variable for the tasks
     private List<Tasks> mItems;
@@ -34,8 +37,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
     // Usually involves inflating a layout from XML and returning the holder
     @Override
     public ItemsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        //final Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(mContext);
 
         // Inflate the custom layout
         View itemView = inflater.inflate(R.layout.individual_item, parent, false);
@@ -43,20 +46,20 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
         // Return a new holder instance
         final ItemsViewHolder viewHolder = new ItemsViewHolder(itemView);
         viewHolder.mListener = new ItemsViewHolder.IMyViewHolderClicks() {
-            @Override
-            public void onTaskNameLongClick(View caller) {
-                final int position = viewHolder.getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    MainActivity activity = (MainActivity)context;
-                    activity.setupDeleteListener(position);
-                }
-            }
+//            @Override
+//            public void onTaskNameLongClick(View caller) {
+//                final int position = viewHolder.getAdapterPosition();
+//                if (position != RecyclerView.NO_POSITION) {
+//                    MainActivity activity = (MainActivity)mContext;
+//                    activity.setupDeleteListener(position);
+//                }
+//            }
 
             @Override
             public void onTaskNameClick(View caller) {
                 final int position = viewHolder.getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    MainActivity activity = (MainActivity)context;
+                    MainActivity activity = (MainActivity)mContext;
                     activity.setupEditListener(position);
                 }
             }
@@ -65,7 +68,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
             public void onCalendarIcon(ImageView callerImage) {
                 final int position = viewHolder.getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    MainActivity activity = (MainActivity) context;
+                    MainActivity activity = (MainActivity) mContext;
                     activity.showDatePickerDialog(position);
                 }
             }
@@ -74,7 +77,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
             public void onPriorityIcon(ImageView callerImage) {
                 final int position = viewHolder.getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    MainActivity activity = (MainActivity) context;
+                    MainActivity activity = (MainActivity) mContext;
                     activity.setupPriorityListener(position);
                 }
             }
@@ -100,6 +103,23 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> {
         else {
             imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_alert_circle_black_24dp));
         }
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            MainActivity activity = (MainActivity)mContext;
+            activity.setupDeleteListener(position);
+        }
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition != RecyclerView.NO_POSITION) {
+            MainActivity activity = (MainActivity)mContext;
+            activity.setupReorderListener(fromPosition, toPosition);
+        }
+        return true;
     }
 
     @Override

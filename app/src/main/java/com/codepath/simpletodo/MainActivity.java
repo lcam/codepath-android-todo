@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
@@ -15,8 +17,14 @@ import java.util.Calendar;  // do not import java.icu.utils.Calendar
 
 import android.widget.Toast;
 
+import com.codepath.simpletodo.itemTouchHelper.ItemTouchHelperCallback;
+import com.orm.query.Select;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static com.orm.query.Select.from;
 
 public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener,
         EditItemDialogFragment.EditItemDialogListener, DatePickerDialog.OnDateSetListener{
@@ -26,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
     RecyclerView rvItems;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    ItemTouchHelper mItemTouchHelper;
 
     Tasks taskSelect;
     int taskSelectPos;
@@ -42,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         setSupportActionBar(toolbar);
 
         rvItems = (RecyclerView)findViewById(R.id.rvTasks);
-        //readItems();
 
         // Query SugarORM for list of data
-        List<Tasks> queryResults = Tasks.findWithQuery(Tasks.class, "Select * from Task");
+        //List<Tasks> queryResults = Tasks.findWithQuery(Tasks.class, "Select * from Task By list_order");
+        List<Tasks> queryResults = Select.from(Tasks.class).orderBy("list_order").list();
 
         // Construct ArrayList for model type
         items = new ArrayList<Tasks>(queryResults);
@@ -65,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         layoutManager.scrollToPosition(0);
         // Attach layout manager to the RecyclerView
         rvItems.setLayoutManager(layoutManager);
+
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(rvItems);
     }
 
     @Override
@@ -96,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     }
 
     public void setupDeleteListener(int position) {
-        // Deleting items
         //A common gotcha here is when there is no such Author with this ID,
         //so a null pointer check here is often advisable.
         //Tasks task = Tasks.findById(Tasks.class, (long)position); //NOT VALID BECAUSE task doesn't have ID field!!!!!!
@@ -112,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     }
 
     public void setupPriorityListener(int position) {
-        //final ImageView priorityIcon = (ImageView) findViewById(R.id.priority_icon);
         taskSelect = items.get(position);
 
         if (taskSelect.priority == 0) {
@@ -126,8 +137,23 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
         //notify the adapter such that the to-do list properly reflects the change
         adapter.notifyItemChanged(position);
+    }
 
-        //Toast.makeText(this, "Priority updated", Toast.LENGTH_SHORT).show();
+    public void setupReorderListener(int fromPosition, int toPosition){
+        long fromOrder = items.get(fromPosition).listOrder;
+        long toOrder = items.get(toPosition).listOrder;
+
+        taskSelect = items.get(toPosition);
+        taskSelect.listOrder = fromOrder;
+        taskSelect.save();
+
+        taskSelect = items.get(fromPosition);
+        taskSelect.listOrder = toOrder;
+        taskSelect.save();
+
+        Collections.swap(items, fromPosition, toPosition);
+
+        adapter.notifyItemMoved(fromPosition, toPosition);
     }
 
 
@@ -173,6 +199,8 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // Create a new task into SQL database
         Tasks task = new Tasks(inputText);
         task.save();
+        task.listOrder = task.getId();
+        task.save();
 
         //add task object to ArrayList
         items.add(task);
@@ -205,11 +233,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         // store the values selected into a Calendar instance
         final Calendar c = Calendar.getInstance();
-
-        //Just another way of setting time
-        //c.set(Calendar.YEAR, year);
-        //c.set(Calendar.MONTH, monthOfYear);
-        //c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         c.set(year, monthOfYear, dayOfMonth, 0, 0);
 
         //update due date for selected task

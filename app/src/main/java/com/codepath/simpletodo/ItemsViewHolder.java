@@ -5,10 +5,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.simpletodo.itemTouchHelper.ItemTouchHelperAdapter;
+
+import java.util.Collections;
+
 
 // Provide a direct reference to each of the views within a data item
 // Used to cache the views within the item layout for fast access
-public class ItemsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+public class ItemsViewHolder extends RecyclerView.ViewHolder implements
+        View.OnClickListener {//, View.OnLongClickListener {
     // Your holder should contain a member variable
     // for any view that will be set as you render a row
     public TextView nameTextView;
@@ -31,8 +36,7 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder implements View.OnC
         calendarIcon.setOnClickListener(this); //calendar icon
         priorityIcon.setOnClickListener(this); //priority icon
         nameTextView.setOnClickListener(this); //edit task
-        nameTextView.setOnLongClickListener(this); //delete task
-        //ver 5.0: use nameTextView instead of itemView to limit clickable surface
+        //nameTextView.setOnLongClickListener(this); //delete task
     }
 
     @Override
@@ -51,15 +55,15 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder implements View.OnC
         }
     }
 
-    @Override
-    public boolean onLongClick(View view) {
-        mListener.onTaskNameLongClick(view);
-        return true;
-    }
+//    @Override
+//    public boolean onLongClick(View view) {
+//        mListener.onTaskNameLongClick(view);
+//        return true;
+//    }
 
     public static interface IMyViewHolderClicks {
         public void onTaskNameClick(View caller);
-        public void onTaskNameLongClick(View caller);
+        //public void onTaskNameLongClick(View caller);
         public void onCalendarIcon(ImageView callerImage);
         public void onPriorityIcon(ImageView callerImage);
     }
