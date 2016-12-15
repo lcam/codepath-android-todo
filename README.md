@@ -61,10 +61,6 @@ Here's a walkthrough of implemented user stories:
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
-## Notes
-
-Making sense of several new methods such as getStringExtra() and putExtra() was important to completing the 1st version of this assingment.
-
 ## License
 
     Copyright 2016 Leon Cam
