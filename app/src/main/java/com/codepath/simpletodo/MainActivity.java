@@ -24,15 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.orm.query.Select.from;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements AddItemDialogFragment.AddItemDialogListener,
         EditItemDialogFragment.EditItemDialogListener, DatePickerDialog.OnDateSetListener{
 
+    @BindView(R.id.toolbar)
+            Toolbar toolbar;
+    @BindView(R.id.rvTasks)
+            RecyclerView rvItems;
+
     ArrayList<Tasks> items;
     ItemsAdapter adapter;
 
-    RecyclerView rvItems;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     ItemTouchHelper mItemTouchHelper;
 
@@ -43,9 +48,8 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        // Find the toolbar view inside the activity layout
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("SimpleToDo");
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         setSupportActionBar(toolbar);

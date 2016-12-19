@@ -18,9 +18,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class EditItemDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
-    private EditText mEditText;
-    private Button mButton;
+    @BindView(R.id.etEditItem)
+        EditText mEditText;
+    @BindView(R.id.btnEditItem)
+        Button mButton;
+    private Unbinder unbinder;
 
     public EditItemDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -46,13 +53,13 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_item, container);
+        unbinder = ButterKnife.bind(this, view);
 
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title");
         getDialog().setTitle(title);
 
         // Fetch old task from bundle and set EditText
-        mEditText = (EditText) view.findViewById(R.id.etEditItem);
         String itemName = getArguments().getString("task");
         mEditText.setText(itemName);
 
@@ -65,7 +72,6 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
         mEditText.setOnEditorActionListener(this);
 
         // Replicate "Done" keyboard press for button press
-        mButton = (Button) view.findViewById(R.id.btnEditItem);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,5 +112,11 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

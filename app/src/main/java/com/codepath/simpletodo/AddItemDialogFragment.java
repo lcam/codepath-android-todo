@@ -18,9 +18,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class AddItemDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
-    private EditText mEditText;
-    private Button mButton;
+    @BindView(R.id.etNewItem)
+    EditText mEditText;
+    @BindView(R.id.btnAddItem)
+    Button mButton;
+    private Unbinder unbinder;
 
     public AddItemDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -45,9 +52,7 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_item, container);
-
-        // Get field from view
-        mEditText = (EditText) view.findViewById(R.id.etNewItem);
+        unbinder = ButterKnife.bind(this, view);
 
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title");
@@ -62,7 +67,6 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
         mEditText.setOnEditorActionListener(this);
 
         // Replicate "Done" keyboard press for button press
-        mButton = (Button) view.findViewById(R.id.btnAddItem);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,5 +107,11 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

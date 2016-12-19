@@ -25,6 +25,10 @@ The following **additional** features are implemented:
 
 * [x] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) for adding items
 
+## Libraries and Patterns Used
+
+1. [Butterknife](http://jakewharton.github.io/butterknife/)
+
 ## Changelog
 
 ver 1.1
@@ -52,6 +56,7 @@ ver 5.0
 ver 6.0
 * [x] Delete tasks by swiping instead of long clicking
 * [x] Reorder tasks by dragging them up or down
+* [x] Integrated Butterknife into project to reduce boilerplate code
 
 ## Video Walkthrough 
 
