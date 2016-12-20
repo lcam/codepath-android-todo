@@ -52,7 +52,7 @@ ver 6.0
 
 ## Video Walkthrough 
 
-Here's a walkthrough of implemented user stories:
+A walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/m3Es138.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 

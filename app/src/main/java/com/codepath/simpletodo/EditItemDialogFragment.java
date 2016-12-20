@@ -20,13 +20,13 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class EditItemDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
     @BindView(R.id.etEditItem)
         EditText mEditText;
-    @BindView(R.id.btnEditItem)
-        Button mButton;
+
     private Unbinder unbinder;
 
     public EditItemDialogFragment() {
@@ -71,15 +71,13 @@ public class EditItemDialogFragment extends DialogFragment implements TextView.O
         // 2. Setup a callback when the "Done" button is pressed on keyboard
         mEditText.setOnEditorActionListener(this);
 
-        // Replicate "Done" keyboard press for button press
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
-            }
-        });
-
         return view;
+    }
+
+    @OnClick(R.id.btnEditItem)
+    public void onClickEdit() {
+        // Replicate "Done" keyboard press for button press
+        mEditText.onEditorAction(EditorInfo.IME_ACTION_DONE);
     }
 
     @Override
