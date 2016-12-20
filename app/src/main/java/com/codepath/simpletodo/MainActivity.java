@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // Attach the adapter to the recyclerview to populate items
         rvItems.setAdapter(adapter);
 
-        // Optionally customize the position you want to default scroll to
         layoutManager.scrollToPosition(0);
         // Attach layout manager to the RecyclerView
         rvItems.setLayoutManager(layoutManager);
@@ -112,9 +111,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
     }
 
     public void setupDeleteListener(int position) {
-        //A common gotcha here is when there is no such Author with this ID,
-        //so a null pointer check here is often advisable.
-        //Tasks task = Tasks.findById(Tasks.class, (long)position); //NOT VALID BECAUSE task doesn't have ID field!!!!!!
         taskSelect = items.get(position);
         taskSelect.delete();
 
@@ -196,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
 
 
     // 3. This method is invoked in the activity when the listener is triggered
-    // Access the data result passed to the activity here
     @Override
     public void onFinishAddDialog(String inputText) {
         // Create a new task into SQL database

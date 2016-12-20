@@ -34,7 +34,6 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder implements
         calendarIcon.setOnClickListener(this); //calendar icon
         priorityIcon.setOnClickListener(this); //priority icon
         nameTextView.setOnClickListener(this); //edit task
-        //nameTextView.setOnLongClickListener(this); //delete task
     }
 
     @Override
@@ -53,15 +52,8 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder implements
         }
     }
 
-//    @Override
-//    public boolean onLongClick(View view) {
-//        mListener.onTaskNameLongClick(view);
-//        return true;
-//    }
-
     public interface IMyViewHolderClicks {
         void onTaskNameClick(View caller);
-        //void onTaskNameLongClick(View caller);
         void onCalendarIcon(ImageView callerImage);
         void onPriorityIcon(ImageView callerImage);
     }

@@ -1,6 +1,5 @@
 package com.codepath.simpletodo;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment; //IMPORTANT: android studio default gets this wrong
@@ -13,15 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
 import butterknife.Unbinder;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
@@ -29,8 +25,7 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 public class AddItemDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
     @BindView(R.id.etNewItem)
         EditText mEditText;
-    //@BindView(R.id.btnAddItem)
-    //Button mButton;
+
     private Unbinder unbinder;
 
     public AddItemDialogFragment() {
@@ -81,18 +76,15 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
 
     @Override
     public void onResume() {
-        // Store access variables for window and blank point
         Window window = getDialog().getWindow();
         Point size = new Point();
         // Store dimensions of the screen in `size`
         Display display = window.getWindowManager().getDefaultDisplay();
         display.getSize(size);
         // Set the width of the dialog proportional to 100% of the screen width
-        //window.setLayout((int) (size.x * 1), WindowManager.LayoutParams.WRAP_CONTENT);
         window.setLayout(size.x, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
 
-        // Call super onResume after sizing
         super.onResume();
     }
 

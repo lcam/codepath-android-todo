@@ -14,22 +14,16 @@ import com.codepath.simpletodo.itemTouchHelper.ItemTouchHelperAdapter;
 import java.util.Collections;
 import java.util.List;
 
-// Create the basic adapter extending from RecyclerView.Adapter
-// Note that we specify the custom ViewHolder which gives us access to our views
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implements ItemTouchHelperAdapter{
 
-    // Store a member variable for the tasks
     private List<Tasks> mItems;
-    // Store the context for easy access
     private final Context mContext;
 
-    // Pass in the task array into the constructor
     public ItemsAdapter(Context context, List<Tasks> items) {
         mItems = items;
         mContext = context;
     }
 
-    // Easy access to the context object in the recyclerview
     private Context getContext() {
         return mContext;
     }
@@ -37,7 +31,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implemen
     // Usually involves inflating a layout from XML and returning the holder
     @Override
     public ItemsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //final Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         // Inflate the custom layout
@@ -46,14 +39,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implemen
         // Return a new holder instance
         final ItemsViewHolder viewHolder = new ItemsViewHolder(itemView);
         viewHolder.mListener = new ItemsViewHolder.IMyViewHolderClicks() {
-//            @Override
-//            public void onTaskNameLongClick(View caller) {
-//                final int position = viewHolder.getAdapterPosition();
-//                if (position != RecyclerView.NO_POSITION) {
-//                    MainActivity activity = (MainActivity)mContext;
-//                    activity.setupDeleteListener(position);
-//                }
-//            }
 
             @Override
             public void onTaskNameClick(View caller) {
