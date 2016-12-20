@@ -7,12 +7,13 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 // Provide a direct reference to each of the views within a data item
 // Used to cache the views within the item layout for fast access
-public class ItemsViewHolder extends RecyclerView.ViewHolder implements
-        View.OnClickListener {//, View.OnLongClickListener {
+public class ItemsViewHolder extends RecyclerView.ViewHolder {//implements
+        //View.OnClickListener {//, View.OnLongClickListener {
     // Member variables for any view that will be set as you render a row
     @BindView(R.id.task_name)
         TextView nameTextView;
@@ -30,14 +31,14 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder implements
         // to access the context from any ViewHolder instance.
         super(itemView);
         ButterKnife.bind(this, itemView);
-
-        calendarIcon.setOnClickListener(this); //calendar icon
-        priorityIcon.setOnClickListener(this); //priority icon
-        nameTextView.setOnClickListener(this); //edit task
     }
 
-    @Override
-    public void onClick(View view) {
+    @OnClick({
+            R.id.calendar_icon,
+            R.id.priority_icon,
+            R.id.task_name
+    })
+    public void onClickItem(View view){
         if (view instanceof ImageView){
             switch (view.getId()) {
                 case R.id.calendar_icon:

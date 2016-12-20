@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         rvItems = (RecyclerView)findViewById(R.id.rvTasks);
 
         // Query SugarORM for list of data
-        //List<Tasks> queryResults = Tasks.findWithQuery(Tasks.class, "Select * from Task By list_order");
         List<Tasks> queryResults = Select.from(Tasks.class).orderBy("list_order").list();
 
         // Construct ArrayList for model type

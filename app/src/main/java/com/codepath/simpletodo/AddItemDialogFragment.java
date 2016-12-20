@@ -18,11 +18,12 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import butterknife.Unbinder;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
-public class AddItemDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
+public class AddItemDialogFragment extends DialogFragment {
     @BindView(R.id.etNewItem)
         EditText mEditText;
 
@@ -62,16 +63,26 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-        // 2. Setup a callback when the "Done" button is pressed on keyboard
-        mEditText.setOnEditorActionListener(this);
-
         return view;
     }
 
     @OnClick(R.id.btnAddItem)
-    public void onClickAdd() {
+    public void onClick() {
         // Replicate "Done" keyboard press for button press
         mEditText.onEditorAction(IME_ACTION_DONE);
+    }
+
+    @OnEditorAction(R.id.etNewItem)
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (IME_ACTION_DONE == actionId) {
+            // Return input text back to activity through the implemented listener
+            AddItemDialogListener listener = (AddItemDialogListener) getActivity();
+            listener.onFinishAddDialog(mEditText.getText().toString());
+            // Close the dialog and return back to the parent activity
+            dismiss();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -86,21 +97,6 @@ public class AddItemDialogFragment extends DialogFragment implements TextView.On
         window.setGravity(Gravity.CENTER);
 
         super.onResume();
-    }
-
-    // Fires whenever the textfield has an action performed
-    // In this case, when the "Done" button is pressed
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (IME_ACTION_DONE == actionId) {
-            // Return input text back to activity through the implemented listener
-            AddItemDialogListener listener = (AddItemDialogListener) getActivity();
-            listener.onFinishAddDialog(mEditText.getText().toString());
-            // Close the dialog and return back to the parent activity
-            dismiss();
-            return true;
-        }
-        return false;
     }
 
     @Override
