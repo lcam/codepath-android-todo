@@ -27,7 +27,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implemen
         return mContext;
     }
 
-    // Usually involves inflating a layout from XML and returning the holder
     @Override
     public ItemsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);

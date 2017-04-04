@@ -58,10 +58,7 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         // Query SugarORM for list of data
         List<Tasks> queryResults = Select.from(Tasks.class).orderBy("list_order").list();
 
-        // Construct ArrayList for model type
-        items = new ArrayList<Tasks>(queryResults);
-
-        // Construct adapter plugging in the array source
+        items = new ArrayList<>(queryResults);
         adapter = new ItemsAdapter(this, items);
 
         // Display dividers for task list
@@ -73,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements AddItemDialogFrag
         rvItems.setAdapter(adapter);
 
         layoutManager.scrollToPosition(0);
-        // Attach layout manager to the RecyclerView
         rvItems.setLayoutManager(layoutManager);
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);

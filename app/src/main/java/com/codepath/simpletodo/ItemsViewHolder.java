@@ -10,11 +10,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-// Provide a direct reference to each of the views within a data item
+// Provides a direct reference to each of the views within a data item
 // Used to cache the views within the item layout for fast access
-public class ItemsViewHolder extends RecyclerView.ViewHolder {//implements
-        //View.OnClickListener {//, View.OnLongClickListener {
-    // Member variables for any view that will be set as you render a row
+public class ItemsViewHolder extends RecyclerView.ViewHolder {
+    // Member variables for any view that will be set as a row is rendered
     @BindView(R.id.task_name)
         TextView nameTextView;
     @BindView(R.id.calendar_icon)
@@ -24,8 +23,7 @@ public class ItemsViewHolder extends RecyclerView.ViewHolder {//implements
 
     public IMyViewHolderClicks mListener;
 
-    // We also create a constructor that accepts the entire item row
-    // and does the view lookups to find each subview
+    // constructor that accepts the entire item row and does the view lookups to find each subview
     public ItemsViewHolder(View itemView) { //NOTICE: NO LONGER PASSING IMyViewHolderClicks INTERFACE AS A PARAMETER
         // Stores the itemView in a public final member variable that can be used
         // to access the context from any ViewHolder instance.
