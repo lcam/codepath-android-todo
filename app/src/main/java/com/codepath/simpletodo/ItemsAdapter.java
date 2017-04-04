@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.codepath.simpletodo.itemTouchHelper.ItemTouchHelperAdapter;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsViewHolder> implements ItemTouchHelperAdapter{
