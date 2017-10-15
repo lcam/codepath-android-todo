@@ -11,7 +11,7 @@ Developed by: Leon Cam
 * [x] Drag to reorder tasks
 * [x] Swipe to delete tasks
 * [x] Todo list is preserved into SQLite
-* [x] Inspired by Material Design
+* [x] Inspired by Google Material Design
 
 ## Libraries and Patterns Used
 
@@ -26,35 +26,33 @@ ver 1.0
 ver 1.1
 * [x] Replaced Listview with RecylerView
 
-ver 2.0
+ver 1.2
 * [x] Replaced Actionbar with Toolbar.  Toolbar reacts to scrolling.
 * [x] For adding items, moved text field and button to a dialog fragment, which can be invoked via toolbar button
 * [x] Updated color scheme, increased font size of task list
 * [x] Keyboard automatically appears to add or edit tasks
 
-ver 3.0
+ver 1.3
 * [x] Persist data with SQLite using ActiveAndroid
 * [x] For editing items, moved standalone edit activity to a dialog fragment
 
-ver 4.0
+ver 1.4
 * [x] ActiveAndroid no longer maintained by developer, so SugarORM is used instead
 * [x] Implemented completion due dates for each task
 
-ver 5.0
+ver 1.5
 * [x] Tasks can now be set as either low or high priority
 * [x] Clicking around calendar and priority icons area no longer triggers edit task dialog
 * [x] Updated launcher icon
 
-ver 6.0
+ver 1.6
 * [x] Delete tasks by swiping instead of long clicking
 * [x] Reorder tasks by dragging them up or down
 * [x] Integrated Butterknife into project to reduce boilerplate code
 
 ## Video Walkthrough 
 
-A walkthrough of implemented user stories:
-
-<img src='http://i.imgur.com/m3Es138.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/TqxZcC8.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
